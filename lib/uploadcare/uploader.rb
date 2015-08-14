@@ -30,17 +30,27 @@ module Uploadcare
       raise ArgumentError.new(resp['error']) if resp['status'] == 'error'
       resp
     end
+
+    def upload_ruby_file(file)
+      resp = response :post, '/base/', {
+        UPLOADCARE_PUB_KEY: @options[:public_key],
+        UPLOADCARE_STORE: @options[:store],
+        file: Faraday::UploadIO.new(file.tempfile.path, file.type)
+      }
+      resp['file']
+    end
+    
   protected
     ##
     # @see http://martinottenwaelter.fr/2010/12/ruby19-and-the-ssl-error/
     # @see https://gist.github.com/938183
 
     # TODO: refactor this peach of unstable mess.
-    # 
+    #
     def response method, path, params = {}
       # For Ubuntu
       ca_path = '/etc/ssl/certs' if File.exists?('/etc/ssl/certs')
-      connection = Faraday.new ssl: { ca_path: ca_path }, 
+      connection = Faraday.new ssl: { ca_path: ca_path },
         url: @options[:upload_url_base] do |faraday|
           faraday.request :multipart
           faraday.request :url_encoded

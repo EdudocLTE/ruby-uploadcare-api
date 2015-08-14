@@ -30,6 +30,10 @@ module Uploadcare
       @uploader.upload_file path
     end
 
+    def upload_ruby_file(file)
+      @uploader.upload_ruby_file file
+    end
+
     # proxy url for uploading
     def upload_file_by_url(url, *options)
       @uploader.upload_url(url, *options)
@@ -104,7 +108,7 @@ module Uploadcare
         frd.headers['Authorization'] = "Uploadcare.Simple #{@options[:public_key]}:#{@options[:private_key]}"
         frd.headers['Accept'] = "application/vnd.uploadcare-v#{@options[:api_version]}+json"
         frd.headers['User-Agent'] = Uploadcare::user_agent
-      end 
+      end
 
       # get the response
       response = connection.send method, path, params
